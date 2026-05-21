@@ -321,7 +321,7 @@ telegram_bot/
 ### /start команда
 ![Start](screenshots/start.png)
 
-### Расписание жауабы
+### Деканат жауабы
 ![Расписание](screenshots/schedule.png)
 
 ### Стипендия жауабы
