@@ -226,9 +226,12 @@ def detect_lang(text: str) -> str:
     return "ru"
 
 # ===== ТАРИХТЫ САҚТАУ =====
-def save_history(user_id: int, username: str, user_msg: str, bot_msg: str, lang: str):
+import asyncio
+from asgiref.sync import sync_to_async
+
+async def save_history(user_id: int, username: str, user_msg: str, bot_msg: str, lang: str):
     try:
-        ChatHistory.objects.create(
+        await sync_to_async(ChatHistory.objects.create)(
             user_id=user_id,
             username=username or "anonymous",
             user_message=user_msg[:500],
@@ -296,7 +299,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
     await update.message.reply_text(text, parse_mode='Markdown', reply_markup=keyboard)
 
-    save_history(
+    await save_history(
         update.message.from_user.id,
         update.message.from_user.username or "",
         "/start",
@@ -382,10 +385,10 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text(clean_answer)
 
     # Тарихты сақтау
-    save_history(user_id, username, text, answer, lang)
+    await save_history(user_id, username, text, answer, lang)
 
 # ===== MAIN =====
-def main():
+async def main():
     if not TOKEN:
         print("❌ TELEGRAM_TOKEN табылмады! .env файлын тексер!")
         return
@@ -401,4 +404,4 @@ def main():
     app.run_polling()
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
